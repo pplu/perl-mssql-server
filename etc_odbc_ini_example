@@ -1,0 +1,7 @@
+[ODBC Data Sources]
+data_source_name = testdsn
+
+[testdsn]
+Driver = /opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.1.so.9.1
+DESCRIPTION = Microsoft ODBC Driver 13 for SQL Server
+SERVER = localhost,1401
