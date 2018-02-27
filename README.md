@@ -19,7 +19,7 @@ sudo apt-get remove --purge libiodbc2
 
 We'll use Perls' carton bundler to install the latest versions of some dependencies (DBI, DBD::ODBC) in a local directory
 ```
-sudo install -y carton
+sudo apt-get install -y carton
 ```
 
 We'll need the UNIX ODBC library, and its' dev package (to compile the DBD::ODBC module)
