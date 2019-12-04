@@ -45,8 +45,9 @@ cd perl-mssql-server
 ```
 Now install the local dependencies with carton (they are in the cpanfile of the repository)
 ```
-carton install
+DBD_ODBC_UNICODE=1 carton install
 ```
+note that you can just `carton install` if you don't need the unicode support.
 
 # Connecting to SQL Server with Perl
 
