@@ -11,7 +11,7 @@ my $user = 'SA';
 my $password = 'Password1';
 
 # Connect to the data source and get a handle for that connection.
-my $dbh = DBI->connect("dbi:ODBC:Driver=/opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.1.so.9.1;Server=localhost,1401", $user, $password, { RaiseError => 1 });
+my $dbh = DBI->connect("dbi:ODBC:Driver=/opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.6.so.1.1;Server=localhost,1401", $user, $password, { RaiseError => 1 });
 # If you have configured a named DSN that uses SQL Server
 #my $dbh = DBI->connect("dbi:ODBC:testdsn", $user, $password, { RaiseError => 1 });
 

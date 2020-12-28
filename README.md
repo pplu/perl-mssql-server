@@ -39,7 +39,7 @@ sudo su -
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
 apt-get update
-ACCEPT_EULA=Y apt-get install msodbcsql
+ACCEPT_EULA=Y apt-get install msodbcsql17
 exit
 ```
 
@@ -94,7 +94,7 @@ In /etc/odbc.ini you should have:
 data_source_name = testdsn
 
 [testdsn]
-Driver = /opt/microsoft/msodbcsql/lib64/libmsodbcsql-13.1.so.9.1
+Driver = /opt/microsoft/msodbcsql17/lib64/libmsodbcsql-17.6.so.1.1 
 DESCRIPTION = Microsoft ODBC Driver 13 for SQL Server
 SERVER=localhost,1401
 ```
