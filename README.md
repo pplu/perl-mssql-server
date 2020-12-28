@@ -1,16 +1,21 @@
-# Connecting to SQL Server with Perl
+# Connecting to SQL Server with Perl from Linux
 
-These are my notes on connecting with Perl to MSSQL Server
+Finding information on how to use SQL Server with Perl is scarce (compared to the plethora of information available for MySQL). Information gets 
+even scarcer when you want to connect to SQL Server with Perl from Linux.
 
-We'll be connecting from a Linux host via ODBC with the native Microsoft ODBC driver. MSSQL will be running
-in a docker container (thanks MS!)
+Most (if not all) of the documentation regarding this ordeal revolves around using FreeTDS: an open source implementation of [FreeTDS](https://www.freetds.org/), which
+is an Open Source implementation of the protocol used by SQL Server. For some while now, Microsoft has been shipping an ODBC driver that works under Linux, and I 
+wanted to try that out, as it also leads to [using Azure SQL Datawarehouse](https://github.com/pplu/azure-sqlserver-sqldatawarehouse-perl).
 
-I've run this test successfully on Debian 9 (stretch)
+So, we'll be connecting from a Linux host via ODBC with the native Microsoft ODBC driver. We can locally "simulate" a MSSQL host by running SQL Server inside a Linux
+Docker container (thanks MS!)
+
+I've run this test successfully on Debian 10 (buster), and prior to this on Debian 9 (stretch) and Debian 8 (jessie) with minor adjustments (repo URLs)
 
 # Preparing the environment:
 
-It looks like the DBD::ODBC has problems if you have libiodbc2 installed. If you don't want to uninstall libodbc2, just
-take a look at [this stack overflow question](https://stackoverflow.com/questions/11354288/undefined-symbol-sqlallochandle-using-perl-on-ubuntu)
+It looks like the DBD::ODBC has problems if you have libiodbc2 installed. If you don't want to uninstall libodbc2, take a look at 
+[this stack overflow question](https://stackoverflow.com/questions/11354288/undefined-symbol-sqlallochandle-using-perl-on-ubuntu)
 for how to avoid the problem without removing libodbc2
 
 ```
@@ -19,7 +24,7 @@ sudo apt-get remove --purge libiodbc2
 
 We'll use Perls' carton bundler to install the latest versions of some dependencies (DBI, DBD::ODBC) in a local directory
 ```
-sudo apt-get install -y carton
+sudo apt-get install -y build-essential carton
 ```
 
 We'll need the UNIX ODBC library, and its' dev package (to compile the DBD::ODBC module)
@@ -32,7 +37,7 @@ Now we'll need to install the Microsoft ODBC driver. [Luckily there are Debian p
 ```
 sudo su -
 curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-curl https://packages.microsoft.com/config/debian/8/prod.list > /etc/apt/sources.list.d/mssql-release.list
+curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list
 apt-get update
 ACCEPT_EULA=Y apt-get install msodbcsql
 exit
@@ -51,7 +56,7 @@ note that you can just `carton install` if you don't need the unicode support.
 
 # Connecting to SQL Server with Perl
 
-Start SQL Server. We'll start it on port 1401 (this is where the connect script will connect to)
+Start SQL Server. We'll start it on port 1401 (this is where the [connect](connect.pl) script will connect to)
 ```
 docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Password1' -e 'MSSQL_PID=Developer' -p 1401:1433 --name sqlcontainer1 -d microsoft/mssql-server-linux
 ```
@@ -72,11 +77,9 @@ And `docker run` the SQL Server container again
 
 # Additional notes
 
-
 ## Named DSN
 
 In the example, the DSN for ODBC is inlined in the connect call to DBI. You can connect via a named DSN also.
-
 
 ```
 my $dbh = DBI->connect("dbi:ODBC:testdsn", $user, $password, { RaiseError => 1 });
@@ -104,8 +107,8 @@ manually throw exceptions based on return values from DBI like this:
 ```
 my $dsn = DBI->connect('...', $user, $password) or die "";
 ```
-That is quite old-school. DBI lets you say that he will throw the exceptions for you, so your code is cleaner, and you
-don't have to worry about `or die ""` in DBI operations.
+That is quite old-school. DBI lets you say that it will throw the exceptions for you, so your code is cleaner, and you
+don't have to worry about plaguing all your DBI calls with `or die ""`.
 
 # Additional links that helped me get this running:
 
